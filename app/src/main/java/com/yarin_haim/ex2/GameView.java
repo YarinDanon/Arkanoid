@@ -17,8 +17,8 @@ public class GameView extends View {
 
     private Score scoreObj;
     private boolean isTouch = false;
-    private int canvasWidth;
-    private int canvasHeight;
+    private float canvasWidth;
+    private float canvasHeight;
 
     public GameView (Context context , AttributeSet atr){
         super(context,atr);
@@ -42,25 +42,8 @@ public class GameView extends View {
 
         canvas.drawText("Score: "+scoreObj.getScorePoint() , 50, 50 ,text);
         canvas.drawText("Lives: "+scoreObj.getLives() , canvasWidth-150, 50 ,text);
-        /*
-        for(int i = 0 ; i < 10 ; i++)
-        {
-            canvas.drawRect(50+(i*250),100,200+(i*250),150,p);
-        }
-         */
 
-
-        //Brick [][] arrayBrick = new Brick [7][4];
-        for(int i = 0 ; i < 7 ; i++)
-        {
-            for(int j = 0 ; j < 4 ; j++)
-            {
-                canvas.drawRect( 50+(i*250),(j*100)+100,200+(i*canvasWidth/7),150+(canvasHeight/12)*j,p);
-                //Brick b = new Brick( 50+(i*250),(canvasHeight/12+100)+(j*100),200+(i*canvasWidth/7),150+(canvasHeight/12)*j);
-                //arrayBrick[i][j] = b;
-            }
-        }
-
+        BrickCollection bricks = new BrickCollection(canvasWidth,canvasHeight,canvas,p);
 
         if(isTouch == true)
         {
