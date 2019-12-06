@@ -2,10 +2,10 @@ package com.yarin_haim.ex2;
 
 public class Brick {
 
-    private int left,top,right,bottom;
+    private float left,top,right,bottom;
     private boolean isHit;
 
-    public Brick(int left,int top, int right,int bottom){
+    public Brick(float left,float top, float right,float bottom){
 
         this.left = left;
         this.top = top;
@@ -21,6 +21,21 @@ public class Brick {
         this.isHit = true;
     }
 
+    public float getLeft(){
+        return this.left;
+    }
+
+    public float getTop(){
+        return this.top;
+    }
+
+    public float getRight(){
+        return this.right;
+    }
+
+    public float getBottom(){
+        return this.bottom;
+    }
 
 
 }

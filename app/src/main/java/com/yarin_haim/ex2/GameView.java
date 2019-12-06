@@ -21,8 +21,8 @@ public class GameView extends View implements SensorEventListener {
 
     private Score scoreObj;
     private boolean isTouch = false;
-    private int canvasWidth;
-    private int canvasHeight;
+    private float canvasWidth;
+    private float canvasHeight;
     private Ball ball;
     private Paddle paddle;
     private float t=0;
@@ -41,7 +41,6 @@ public class GameView extends View implements SensorEventListener {
         if(this.scoreObj == null ) {
             initGame();
         }
-
         super.onDraw(canvas);
         Paint p = new Paint();
         Paint text = new Paint();
@@ -62,17 +61,7 @@ public class GameView extends View implements SensorEventListener {
          */
 
 
-        //Brick [][] arrayBrick = new Brick [7][4];
-        for(int i = 0 ; i < 7 ; i++)
-        {
-            for(int j = 0 ; j < 4 ; j++)
-            {
-                canvas.drawRect( 50+(i*250),(j*100)+100,200+(i*canvasWidth/7),150+(canvasHeight/12)*j,p);
-                //Brick b = new Brick( 50+(i*250),(canvasHeight/12+100)+(j*100),200+(i*canvasWidth/7),150+(canvasHeight/12)*j);
-                //arrayBrick[i][j] = b;
-            }
-        }
-
+        BrickCollection bricks = new BrickCollection(canvasWidth,canvasHeight,canvas,p);
 
         if(isTouch == true)
         {
