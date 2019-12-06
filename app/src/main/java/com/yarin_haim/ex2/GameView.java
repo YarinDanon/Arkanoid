@@ -88,7 +88,7 @@ public class GameView extends View implements SensorEventListener {
         }
 
         ball.draw(canvas);
-        ball.move(paddle,canvasWidth,canvasHeight);
+        ball.move(bricks,paddle,canvasWidth,canvasHeight);
         paddle.draw(canvas);
         paddle.move(canvasWidth);
 

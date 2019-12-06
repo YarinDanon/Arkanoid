@@ -11,11 +11,20 @@ public class Ball {
     private int SPEED = 3;
     private boolean isHit = false;
 
-    public Ball(int x,int y,int radius,int color,Paddle p){
+    public Ball(float x,float y,int radius,int color,Paddle p){
         this.radius = radius;
         this.color = color;
         this.vector = new double[2];
         init(p);
+    }
+    public float getX(){
+        return this.x;
+    }
+    public float getY(){
+        return this.y;
+    }
+    public float getRadius(){
+        return this.radius;
     }
 
     public void draw(Canvas canvas)
@@ -31,18 +40,18 @@ public class Ball {
         this.vector[0] = (Math.random() * 2 - 1) + this.SPEED;
         this.vector[1] =  this.SPEED;
     }
-//BrickCollection bc,
-    public void move(Paddle p,int widthSrceen,int heightScreen){
+    public void move(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen){
         this.x += vector[0];
         this.y += vector[1];
 
-        if(this.y >= p.getY())
+        if(this.y-this.radius >= p.getY()) { // lose
+            vector[1] *= -1;
             return;
-        checkBallHit(p,widthSrceen,heightScreen);
+        }
+        checkBallHit(bricks,p,widthSrceen,heightScreen);
     }
 
-//BrickCollection bc, Paddle p,
-    private void checkBallHit(Paddle p,int widthSrceen,int heightScreen) {
+    private void checkBallHit(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen) {
 
         // screen hit
         if(this.x - this.radius <= 0 || this.x + this.radius >= widthSrceen)
@@ -61,6 +70,24 @@ public class Ball {
         }
         else
             isHit = false;
+
+
+        // brick hit
+        for (int i=0 ; i<bricks.getRows();i++){
+            for(int j = 0 ; j < bricks.getColumns() ; j++){
+                Brick brick = bricks.getArrayBrick()[i][j];
+
+                if(brick.getRight() >= this.x - this.radius && brick.getLeft() <= this.x + this.radius && brick.getBottom() >= this.y - this.radius && brick.getTop() <= this.y + this.radius){
+                    // hit from the sides
+                    if(this.x > brick.getRight() || this.x < brick.getLeft())
+                        this.vector[0] *= -1;
+                    else // hit from the bottom or from the top
+                        this.vector[1] *= -1;
+                    brick.hit();
+                    return;
+                }
+            }
+        }
 
     }
 

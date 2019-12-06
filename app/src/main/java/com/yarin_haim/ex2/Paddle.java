@@ -30,7 +30,7 @@ public class Paddle {
         return this.height;
     }
 
-    public void setPaddle(int widthScreen,int heightScreen){
+    public void setPaddle(float widthScreen,float heightScreen){
         this.x = widthScreen/2 - width/2;
         this.y = (float) (heightScreen - height*1.5);
     }
@@ -40,13 +40,13 @@ public class Paddle {
         pPaddle.setColor(this.color);
         canvas.drawRect(this.x,this.y,this.x+this.width,this.y+this.height,pPaddle);
     }
-    public void move(int widthScreen){
+    public void move(float widthScreen){
         int SPACE = 10;
         if(this.x+this.balance > SPACE && this.x+this.balance < widthScreen - this.width - SPACE)
             this.x += this.balance;
     }
     public void setBalance(float x){
-        if(Math.abs(x)*180 > 15) {
+        if(Math.abs(x)*180 > 10) {
             if (x < 0)
                 this.balance = -5;
             else

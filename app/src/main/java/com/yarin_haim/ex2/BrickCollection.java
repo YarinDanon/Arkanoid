@@ -12,13 +12,13 @@ public class BrickCollection {
     public BrickCollection(float canvasWidth , float canvasHeight, Canvas canvas, Paint p){
 
         this.rows = 4;
-        this.columns = 7;
-        arrayBrick = new Brick [4][7];
+        this.columns = 5;
+        arrayBrick = new Brick [4][5];
         float x = canvasWidth*(float)(0.024);
         float y = canvasHeight*(float)(0.06);
         for(int i = 0 ; i < 4 ; i++)
         {
-            for(int j = 0 ; j < 7 ; j++)
+            for(int j = 0 ; j < 5 ; j++)
             {
                 Brick brick = new Brick(x, y, x + canvasWidth * (float) (0.13), y + canvasHeight * (float) (0.063));
                 arrayBrick[i][j] = brick;
@@ -31,6 +31,9 @@ public class BrickCollection {
 
     }
 
+    public Brick[][] getArrayBrick(){
+        return arrayBrick;
+    }
     public int getRows(){
 
         return this.rows;
