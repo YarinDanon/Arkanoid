@@ -9,12 +9,14 @@ public class BrickCollection {
 
     public Brick [][] arrayBrick;
     private int rows,columns;
+    private boolean finish;
 
 
     public BrickCollection(float canvasWidth , float canvasHeight,int rows,int columns){
 
         this.rows = rows;
         this.columns = columns;
+        this.finish =false;
         arrayBrick = new Brick [rows][columns];
         float space = (float) ((canvasWidth/columns) * 0.1);
         float width = (float) ((canvasWidth/columns) * 0.9 - (space/columns));
@@ -38,11 +40,15 @@ public class BrickCollection {
     public void draw(Canvas canvas){
         Paint  p = new Paint();
         p.setColor(Color.BLUE);
+        boolean empty = true;
         for(int i = 0 ; i < rows ; i++)
             for(int j = 0 ; j < columns ; j++)
-                if(!arrayBrick[i][j].getHit())
+                if(!arrayBrick[i][j].getHit()) {
                     arrayBrick[i][j].draw(canvas, p);
-
+                    empty =false;
+                }
+        if(empty)
+            this.finish = true;
     }
 
     public void reset(){
@@ -50,6 +56,10 @@ public class BrickCollection {
             for(int j = 0 ; j < columns ; j++)
                 arrayBrick[i][j].setHit(false);
 
+        this.finish = false;
+    }
+    public boolean getFinish(){
+        return this.finish;
     }
     public Brick[][] getArrayBrick(){
         return arrayBrick;
