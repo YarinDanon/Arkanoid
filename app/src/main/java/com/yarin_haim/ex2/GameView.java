@@ -57,37 +57,29 @@ public class GameView extends View implements SensorEventListener {
 
         canvas.drawText("Score: "+scoreObj.getScorePoint() , 50, 50 ,text);
         canvas.drawText("Lives: "+scoreObj.getLives() , canvasWidth-150, 50 ,text);
-        /*
-        for(int i = 0 ; i < 10 ; i++)
-        {
-            canvas.drawRect(50+(i*250),100,200+(i*250),150,p);
-        }
-         */
 
-
-
-
-        if(isTouch == true)
-        {
-            if(scoreObj.getLives() == 0){
+        if(isTouch == true) {
+            if (scoreObj.getLives() == 0) {
                 initGame();
 
             }
-            canvas.drawText("PLAYING MODE" , canvasWidth/2, canvasHeight/2 ,text);
-            //if(ballfall)
+            if (this.ball.getIsFall()) {
                 this.isTouch = false;
                 this.scoreObj.updateLives();
+            }
 
         }
         else {
             if(scoreObj.getLives() == 0)
             {
                 canvas.drawText("Game Over Click to PLAY AGAIN!", canvasWidth / 2, canvasHeight / 2, text);
+                paddle.initPaddle(canvasWidth,canvasHeight);
             }
             else {
 
                 canvas.drawText("Click to PLAY!", canvasWidth / 2, canvasHeight / 2, text);
-
+                paddle.initPaddle(canvasWidth,canvasHeight);
+                ball.init(paddle);
             }
         }
 
@@ -96,9 +88,6 @@ public class GameView extends View implements SensorEventListener {
         ball.move(bricks,paddle,canvasWidth,canvasHeight);
         paddle.draw(canvas);
         paddle.move(canvasWidth);
-
-        invalidate();
-
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -124,7 +113,7 @@ public class GameView extends View implements SensorEventListener {
                 isTouch = true;
                 break;
         }
-        invalidate();
+        fork();
         return true;
     }
 
@@ -151,6 +140,21 @@ public class GameView extends View implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    public void fork(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                while(isTouch)
+                {
+                    invalidate();
+                }
+
+            }
+        }).start();
     }
 }
 
