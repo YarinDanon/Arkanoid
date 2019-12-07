@@ -10,7 +10,7 @@ public class Ball {
     private int color;
     private int SPEED = 3;
     private boolean isHit = false;
-    private boolean isFall = false;
+    private boolean isFall;
 
 
     public Ball(int radius,int color,Paddle p){
@@ -40,25 +40,26 @@ public class Ball {
         this.x = p.getX() + p.getWidth()/2;
         this.y = p.getY() - this.radius - 1;
         this.vector[0] = (Math.random() * 2 - 1) + this.SPEED;
-        this.vector[1] =  this.SPEED;
+        this.vector[1] =  this.SPEED * -1;
+        this.isFall = false;
     }
+
     public boolean getIsFall(){
         return this.isFall;
     }
 
-    public void move(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen){
+    public void move(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen,Score score){
         this.x += vector[0];
         this.y += vector[1];
 
         if(this.y-this.radius >= p.getY()) { // lose
             this.isFall = true;
-            vector[1] *= 1;
             return;
         }
-        checkBallHit(bricks,p,widthSrceen,heightScreen);
+        checkBallHit(bricks,p,widthSrceen,heightScreen,score);
     }
 
-    private void checkBallHit(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen) {
+    private void checkBallHit(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen,Score score) {
 
         // screen hit
         if(this.x - this.radius <= 0 || this.x + this.radius >= widthSrceen)
@@ -86,10 +87,16 @@ public class Ball {
                     // add
                 if(!brick.getHit() && brick.getRight() >= this.x - this.radius && brick.getLeft() <= this.x + this.radius && brick.getBottom() >= this.y - this.radius && brick.getTop() <= this.y + this.radius){
                     // hit from the sides
-                    if(this.x > brick.getRight() || this.x < brick.getLeft())
-                        this.vector[0] *= -1;
-                    else // hit from the bottom or from the top
+                    int a = (int) (this.radius - this.SPEED);
+                    if(this.x-brick.getRight() < a  && this.x-brick.getLeft() > -a )
                         this.vector[1] *= -1;
+                    else if (this.y-brick.getBottom() < a && this.y-brick.getTop() > -a) // hit from the bottom or from the top
+                        this.vector[0] *= -1;
+                    else {
+                        this.vector[0] *= -1;
+                        this.vector[1] *= -1;
+                    }
+                    score.updateScore(1);
                     brick.hit();
                     return;
                 }

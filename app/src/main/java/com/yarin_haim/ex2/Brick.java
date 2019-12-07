@@ -1,5 +1,8 @@
 package com.yarin_haim.ex2;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 public class Brick {
 
     private float left,top,right,bottom;
@@ -12,6 +15,10 @@ public class Brick {
         this.right = right;
         this.bottom = bottom;
         this.isHit = false;
+    }
+
+    public void draw(Canvas canvas, Paint p){
+        canvas.drawRect(this.left,this.top ,this.right,this.bottom,p);
     }
 
     public void hit() {

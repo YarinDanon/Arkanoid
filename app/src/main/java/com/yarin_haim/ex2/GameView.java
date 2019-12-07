@@ -28,7 +28,6 @@ public class GameView extends View implements SensorEventListener {
     private Ball ball;
     private Paddle paddle;
     private BrickCollection bricks;
-    private float t=0;
 
     GameView(Context context) {
         this(context, null);
@@ -37,6 +36,7 @@ public class GameView extends View implements SensorEventListener {
     public GameView (Context context , AttributeSet atr){
         super(context,atr);
         paddle = new Paddle(250,30,Color.RED);
+        fork();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -64,7 +64,6 @@ public class GameView extends View implements SensorEventListener {
                 this.isTouch = false;
                 this.scoreObj.updateLives();
             }
-
         }
         else {
             if(scoreObj.getLives() == 0)
@@ -84,7 +83,7 @@ public class GameView extends View implements SensorEventListener {
 
         bricks.draw(canvas);
         ball.draw(canvas);
-        ball.move(bricks,paddle,canvasWidth,canvasHeight);
+        ball.move(bricks,paddle,canvasWidth,canvasHeight,scoreObj);
         paddle.draw(canvas);
         paddle.move(canvasWidth);
     }
@@ -97,7 +96,7 @@ public class GameView extends View implements SensorEventListener {
 
         paddle.initPaddle(canvasWidth,canvasHeight);
         ball = new Ball(20,Color.GREEN,paddle);
-        bricks = new BrickCollection(canvasWidth,canvasHeight);
+        bricks = new BrickCollection(canvasWidth,canvasHeight,4,7);
 
     }
 
@@ -112,7 +111,6 @@ public class GameView extends View implements SensorEventListener {
                 isTouch = true;
                 break;
         }
-        fork();
         return true;
     }
 
@@ -147,12 +145,12 @@ public class GameView extends View implements SensorEventListener {
             @Override
             public void run()
             {
-                while(isTouch)
+                while(true)
                 {
-                    postInvalidate();
+                    if(isTouch)
+                        postInvalidate();
                 }
             }
         }).start();
     }
 }
-
