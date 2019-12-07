@@ -26,16 +26,12 @@ public class MainActivity extends AppCompatActivity{
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         orientaionSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);  // deprecated
-        if (orientaionSensor == null)
-        {
-            String sensorErrMsg = "";
-            sensorErrMsg += "\nOrientaion Sensor NOT exists!";
-            sensorErrMsg += "\nThe app will exit!";
+        if (orientaionSensor == null) {
+            String sensorErrMsg = "\nOrientaion Sensor NOT exists!\nThe app will exit!";
             Toast.makeText(this, sensorErrMsg, Toast.LENGTH_LONG).show();
             finish();
         }
     }
-
 
     @Override
     protected void onResume()

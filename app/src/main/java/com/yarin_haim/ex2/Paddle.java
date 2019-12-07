@@ -2,7 +2,10 @@ package com.yarin_haim.ex2;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 
 public class Paddle {
@@ -30,21 +33,24 @@ public class Paddle {
         return this.height;
     }
 
-    public void setPaddle(float widthScreen,float heightScreen){
+    public void initPaddle(float widthScreen,float heightScreen){
         this.x = widthScreen/2 - width/2;
         this.y = (float) (heightScreen - height*1.5);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void draw(Canvas canvas){
         Paint pPaddle = new Paint();
         pPaddle.setColor(this.color);
-        canvas.drawRect(this.x,this.y,this.x+this.width,this.y+this.height,pPaddle);
+        canvas.drawRoundRect(this.x,this.y,this.x+this.width,this.y+this.height,10,10,pPaddle);
+        //canvas.drawRect(this.x,this.y,this.x+this.width,this.y+this.height,pPaddle);
     }
     public void move(float widthScreen){
         int SPACE = 10;
         if(this.x+this.balance > SPACE && this.x+this.balance < widthScreen - this.width - SPACE)
             this.x += this.balance;
     }
+
     public void setBalance(float x){
         if(Math.abs(x)*180 > 10) {
             if (x < 0)

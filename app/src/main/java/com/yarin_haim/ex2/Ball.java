@@ -10,8 +10,10 @@ public class Ball {
     private int color;
     private int SPEED = 3;
     private boolean isHit = false;
+    private boolean isFall = false;
 
-    public Ball(float x,float y,int radius,int color,Paddle p){
+
+    public Ball(int radius,int color,Paddle p){
         this.radius = radius;
         this.color = color;
         this.vector = new double[2];
@@ -40,12 +42,17 @@ public class Ball {
         this.vector[0] = (Math.random() * 2 - 1) + this.SPEED;
         this.vector[1] =  this.SPEED;
     }
+    public boolean getIsFall(){
+        return this.isFall;
+    }
+
     public void move(BrickCollection bricks,Paddle p,float widthSrceen,float heightScreen){
         this.x += vector[0];
         this.y += vector[1];
 
         if(this.y-this.radius >= p.getY()) { // lose
-            vector[1] *= -1;
+            this.isFall = true;
+            vector[1] *= 1;
             return;
         }
         checkBallHit(bricks,p,widthSrceen,heightScreen);
@@ -76,8 +83,8 @@ public class Ball {
         for (int i=0 ; i<bricks.getRows();i++){
             for(int j = 0 ; j < bricks.getColumns() ; j++){
                 Brick brick = bricks.getArrayBrick()[i][j];
-
-                if(brick.getRight() >= this.x - this.radius && brick.getLeft() <= this.x + this.radius && brick.getBottom() >= this.y - this.radius && brick.getTop() <= this.y + this.radius){
+                    // add
+                if(!brick.getHit() && brick.getRight() >= this.x - this.radius && brick.getLeft() <= this.x + this.radius && brick.getBottom() >= this.y - this.radius && brick.getTop() <= this.y + this.radius){
                     // hit from the sides
                     if(this.x > brick.getRight() || this.x < brick.getLeft())
                         this.vector[0] *= -1;

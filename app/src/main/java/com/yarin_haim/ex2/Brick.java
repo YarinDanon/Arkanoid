@@ -12,13 +12,13 @@ public class Brick {
         this.right = right;
         this.bottom = bottom;
         this.isHit = false;
-
-
     }
 
     public void hit() {
-
         this.isHit = true;
+    }
+    public boolean getHit(){
+        return this.isHit;
     }
 
     public float getLeft(){

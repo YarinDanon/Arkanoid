@@ -4,6 +4,7 @@ package com.yarin_haim.ex2;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 
 
 public class GameView extends View implements SensorEventListener {
@@ -25,6 +27,7 @@ public class GameView extends View implements SensorEventListener {
     private float canvasHeight;
     private Ball ball;
     private Paddle paddle;
+    private BrickCollection bricks;
     private float t=0;
 
     GameView(Context context) {
@@ -36,6 +39,7 @@ public class GameView extends View implements SensorEventListener {
         paddle = new Paddle(250,30,Color.RED);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onDraw(Canvas canvas) {
 
         if(this.scoreObj == null ) {
@@ -61,7 +65,7 @@ public class GameView extends View implements SensorEventListener {
          */
 
 
-        BrickCollection bricks = new BrickCollection(canvasWidth,canvasHeight,canvas,p);
+
 
         if(isTouch == true)
         {
@@ -87,6 +91,7 @@ public class GameView extends View implements SensorEventListener {
             }
         }
 
+        bricks.draw(canvas);
         ball.draw(canvas);
         ball.move(bricks,paddle,canvasWidth,canvasHeight);
         paddle.draw(canvas);
@@ -102,9 +107,9 @@ public class GameView extends View implements SensorEventListener {
         canvasWidth = w;
         canvasHeight = h;
 
-        paddle.setPaddle(canvasWidth,canvasHeight);
-        ball = new Ball(canvasWidth/2,canvasHeight,20,Color.GREEN,paddle);
-
+        paddle.initPaddle(canvasWidth,canvasHeight);
+        ball = new Ball(20,Color.GREEN,paddle);
+        bricks = new BrickCollection(canvasWidth,canvasHeight);
 
     }
 
