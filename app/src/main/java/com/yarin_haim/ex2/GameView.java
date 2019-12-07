@@ -59,10 +59,7 @@ public class GameView extends View implements SensorEventListener {
         canvas.drawText("Lives: "+scoreObj.getLives() , canvasWidth-150, 50 ,text);
 
         if(isTouch == true) {
-            if (scoreObj.getLives() == 0) {
-                initGame();
 
-            }
             if (this.ball.getIsFall()) {
                 this.isTouch = false;
                 this.scoreObj.updateLives();
@@ -74,6 +71,8 @@ public class GameView extends View implements SensorEventListener {
             {
                 canvas.drawText("Game Over Click to PLAY AGAIN!", canvasWidth / 2, canvasHeight / 2, text);
                 paddle.initPaddle(canvasWidth,canvasHeight);
+                ball.init(paddle);
+                initGame();
             }
             else {
 
@@ -150,9 +149,8 @@ public class GameView extends View implements SensorEventListener {
             {
                 while(isTouch)
                 {
-                    invalidate();
+                    postInvalidate();
                 }
-
             }
         }).start();
     }
