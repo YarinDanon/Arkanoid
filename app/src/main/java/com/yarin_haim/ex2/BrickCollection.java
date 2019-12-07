@@ -44,6 +44,13 @@ public class BrickCollection {
                     arrayBrick[i][j].draw(canvas, p);
 
     }
+
+    public void reset(){
+        for(int i = 0 ; i < rows ; i++)
+            for(int j = 0 ; j < columns ; j++)
+                arrayBrick[i][j].setHit(false);
+
+    }
     public Brick[][] getArrayBrick(){
         return arrayBrick;
     }

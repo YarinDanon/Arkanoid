@@ -97,7 +97,7 @@ public class Ball {
                         this.vector[1] *= -1;
                     }
                     score.updateScore(1);
-                    brick.hit();
+                    brick.setHit(true);
                     return;
                 }
             }

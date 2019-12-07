@@ -21,8 +21,8 @@ public class Brick {
         canvas.drawRect(this.left,this.top ,this.right,this.bottom,p);
     }
 
-    public void hit() {
-        this.isHit = true;
+    public void setHit(boolean b) {
+        this.isHit = b;
     }
     public boolean getHit(){
         return this.isHit;
