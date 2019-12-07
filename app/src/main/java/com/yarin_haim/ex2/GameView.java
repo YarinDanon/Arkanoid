@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi;
 
 public class GameView extends View implements SensorEventListener {
 
+    private boolean reGame;
     private Score scoreObj;
     private boolean isTouch = false;
     private float canvasWidth;
@@ -51,31 +52,50 @@ public class GameView extends View implements SensorEventListener {
         Paint data = new Paint();
         text.setTextSize(40);
         text.setColor(Color.RED);
-        p.setColor(Color.BLUE);
+        p.setTextSize(70);
+        p.setColor(Color.YELLOW);
         p.setStyle(Paint.Style.FILL);
-
 
         canvas.drawText("Score: "+scoreObj.getScorePoint() , 50, 50 ,text);
         canvas.drawText("Lives: "+scoreObj.getLives() , canvasWidth-150, 50 ,text);
 
         if(isTouch == true) {
 
-            if (this.ball.getIsFall()) {
-                this.isTouch = false;
-                this.scoreObj.updateLives();
-            }
-        }
-        else {
-            if(scoreObj.getLives() == 0)
+            if(reGame)
             {
-                canvas.drawText("Game Over Click to PLAY AGAIN!", canvasWidth / 2, canvasHeight / 2, text);
+                this.reGame = false;
+                canvas.drawText("Click to PLAY!", (canvasWidth / 2)-150, (canvasHeight / 2)+100, p);
                 paddle.initPaddle(canvasWidth,canvasHeight);
                 ball.init(paddle);
                 initGame();
+                isTouch = false;
+            }
+
+            else if (this.ball.getIsFall()) {
+                this.isTouch = false;
+                this.scoreObj.updateLives();
+            }
+            else if(bricks.getFinish()){
+                this.isTouch = false;
+                this.reGame = true;
+            }
+            ball.move(bricks,paddle,canvasWidth,canvasHeight,scoreObj);
+        }
+        else {
+            if(reGame){
+                canvas.drawText("YOU WON!! Click to PLAY AGAIN!", (canvasWidth / 2) - 500, (canvasHeight / 2) + 100, p);
+            }
+            else if(scoreObj.getLives() == 0)
+            {
+                canvas.drawText("Game Over Click to PLAY AGAIN!", (canvasWidth / 2) - 500, (canvasHeight / 2)+100, p);
+                paddle.initPaddle(canvasWidth,canvasHeight);
+                ball.init(paddle);
+                this.reGame = true;
+
             }
             else {
 
-                canvas.drawText("Click to PLAY!", canvasWidth / 2, canvasHeight / 2, text);
+                canvas.drawText("Click to PLAY!", (canvasWidth / 2)-150, (canvasHeight / 2)+100, p);
                 paddle.initPaddle(canvasWidth,canvasHeight);
                 ball.init(paddle);
             }
@@ -83,7 +103,6 @@ public class GameView extends View implements SensorEventListener {
 
         bricks.draw(canvas);
         ball.draw(canvas);
-        ball.move(bricks,paddle,canvasWidth,canvasHeight,scoreObj);
         paddle.draw(canvas);
         paddle.move(canvasWidth);
     }
@@ -94,6 +113,7 @@ public class GameView extends View implements SensorEventListener {
         canvasWidth = w;
         canvasHeight = h;
 
+        this.reGame = false;
         paddle.initPaddle(canvasWidth,canvasHeight);
         ball = new Ball(20,Color.GREEN,paddle);
         bricks = new BrickCollection(canvasWidth,canvasHeight,4,7);
@@ -116,7 +136,10 @@ public class GameView extends View implements SensorEventListener {
 
     public void initGame(){
 
+        paddle.initPaddle(canvasWidth,canvasHeight);
+        ball.init(paddle);
         this.scoreObj = new Score();
+        bricks = new BrickCollection(canvasWidth,canvasHeight,4,7);
 
     }
 
