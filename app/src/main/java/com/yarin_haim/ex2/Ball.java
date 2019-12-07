@@ -39,7 +39,7 @@ public class Ball {
     public void init(Paddle p) {
         this.x = p.getX() + p.getWidth()/2;
         this.y = p.getY() - this.radius - 1;
-        this.vector[0] = (Math.random() * 2 - 1) + this.SPEED;
+        this.vector[0] = (Math.random() * 2 - 1) * this.SPEED;
         this.vector[1] =  this.SPEED * -1;
         this.isFall = false;
     }
