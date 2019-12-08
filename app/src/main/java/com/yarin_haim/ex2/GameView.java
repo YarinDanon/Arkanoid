@@ -71,7 +71,6 @@ public class GameView extends View implements SensorEventListener {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("state",State + " ");
         switch (State) {
             case GET_READY:
                 running = false;
