@@ -4,6 +4,7 @@ package com.yarin_haim.ex2;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,17 +19,25 @@ import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
+import static android.graphics.Paint.Align.CENTER;
+import static android.graphics.Paint.Align.LEFT;
+
 
 public class GameView extends View implements SensorEventListener {
 
-    private boolean reGame;
+    private MediaPlayer mp;
     private Score scoreObj;
-    private boolean isTouch = false;
     private float canvasWidth;
     private float canvasHeight;
     private Ball ball;
     private Paddle paddle;
     private BrickCollection bricks;
+    private ScreenManager screenManager;
+    private int State;
+    private boolean running;
+    private String title;
+    public static final int GET_READY = 1,PLAYING = 2 , GAME_OVER = 3 ,
+                            ROWS = 4 , COLUMNS = 7;
 
     GameView(Context context) {
         this(context, null);
@@ -37,74 +46,11 @@ public class GameView extends View implements SensorEventListener {
     public GameView (Context context , AttributeSet atr){
         super(context,atr);
         paddle = new Paddle(250,30,Color.RED);
+        State = GET_READY;
+        running = false;
         fork();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    protected void onDraw(Canvas canvas) {
-
-        if(this.scoreObj == null ) {
-            initGame();
-        }
-        super.onDraw(canvas);
-        Paint p = new Paint();
-        Paint text = new Paint();
-        Paint data = new Paint();
-        text.setTextSize(40);
-        text.setColor(Color.RED);
-        p.setTextSize(70);
-        p.setColor(Color.YELLOW);
-        p.setStyle(Paint.Style.FILL);
-
-        canvas.drawText("Score: "+scoreObj.getScorePoint() , 50, 50 ,text);
-        canvas.drawText("Lives: "+scoreObj.getLives() , canvasWidth-150, 50 ,text);
-
-        if(isTouch == true) {
-
-            if(reGame)
-            {
-                this.reGame = false;
-                canvas.drawText("Click to PLAY!", (canvasWidth / 2)-150, (canvasHeight / 2)+100, p);
-                paddle.initPaddle(canvasWidth,canvasHeight);
-                ball.init(paddle);
-                initGame();
-                isTouch = false;
-            }
-
-            else if (this.ball.getIsFall()) {
-                this.isTouch = false;
-                this.scoreObj.updateLives();
-            }
-            else if(bricks.getFinish()){
-                this.isTouch = false;
-                this.reGame = true;
-            }
-            ball.move(bricks,paddle,canvasWidth,canvasHeight,scoreObj);
-        }
-        else {
-            if(reGame){
-                canvas.drawText("YOU WON!! Click to PLAY AGAIN!", (canvasWidth / 2) - 500, (canvasHeight / 2) + 100, p);
-            }
-            else if(scoreObj.getLives() == 0)
-            {
-                canvas.drawText("Game Over Click to PLAY AGAIN!", (canvasWidth / 2) - 500, (canvasHeight / 2)+100, p);
-                paddle.initPaddle(canvasWidth,canvasHeight);
-                ball.init(paddle);
-                this.reGame = true;
-
-            }
-            else {
-
-                canvas.drawText("Click to PLAY!", (canvasWidth / 2)-150, (canvasHeight / 2)+100, p);
-                paddle.initPaddle(canvasWidth,canvasHeight);
-                ball.init(paddle);
-            }
-        }
-
-        bricks.draw(canvas);
-        ball.draw(canvas);
-        paddle.draw(canvas);
-        paddle.move(canvasWidth);
+        mp = MediaPlayer.create(context,R.raw.music);
+        mp.setLooping(false);
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -113,47 +59,84 @@ public class GameView extends View implements SensorEventListener {
         canvasWidth = w;
         canvasHeight = h;
 
-        this.reGame = false;
         paddle.initPaddle(canvasWidth,canvasHeight);
         ball = new Ball(20,Color.GREEN,paddle);
-        bricks = new BrickCollection(canvasWidth,canvasHeight,4,7);
+        scoreObj = new Score(canvasWidth);
+        bricks = new BrickCollection(canvasWidth,canvasHeight,ROWS,COLUMNS,scoreObj.getTextSize());
+
+        screenManager = new ScreenManager(paddle,ball,bricks,scoreObj,canvasWidth,canvasHeight,mp);
+        screenManager.initScreen();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Log.d("state",State + " ");
+        switch (State) {
+            case GET_READY:
+                running = false;
+                title = "Click to PLAY!";
+                break;
+
+            case PLAYING:
+                title = "";
+                screenManager.updateScreen();
+                if(ball.getIsFall()) {
+                    scoreObj.updateLives();
+                    paddle.initPaddle(canvasWidth,canvasHeight);
+                    ball.init(paddle);
+                    State = GET_READY;
+                }
+                if(bricks.getFinish() || scoreObj.getLives() == 0)
+                    State = GAME_OVER;
+                break;
+
+            case GAME_OVER:
+                running = false;
+                if(bricks.getFinish())
+                    title = "YOU WON!! Click to PLAY AGAIN!";
+                if(scoreObj.getLives() == 0)
+                    title = "Game Over Click to PLAY AGAIN!";
+                break;
+        }
+
+        scoreObj.draw(canvas);
+        bricks.draw(canvas);
+        ball.draw(canvas);
+        paddle.draw(canvas);
+        drawTitle(canvas,title);
 
     }
 
     public boolean onTouchEvent(MotionEvent event) {
 
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
-        int e = event.getAction();
-
-        switch (e) {
-            case MotionEvent.ACTION_DOWN:
-                isTouch = true;
-                break;
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            switch (State) {
+                case GET_READY:
+                    State = PLAYING;
+                    running = true;
+                    break;
+                case PLAYING: // do nothing
+                    break;
+                case GAME_OVER:
+                    screenManager.initScreen();
+                    State = GET_READY;
+                    invalidate();
+                    break;
+            }
         }
         return true;
     }
 
-    public void initGame(){
-
-        paddle.initPaddle(canvasWidth,canvasHeight);
-        ball.init(paddle);
-        this.scoreObj = new Score();
-        bricks = new BrickCollection(canvasWidth,canvasHeight,4,7);
-
-    }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         switch (sensorEvent.sensor.getType())
         {
             case Sensor.TYPE_ORIENTATION:
-                // Get Sensor Orientation Angles (in degrees) around 3 axis
                 float x = sensorEvent.values[0];  // Pitch (the angle around the x-axis)
                 paddle.setBalance(x);
                 break;
-            default:
-                // do nothing
         }
     }
 
@@ -170,10 +153,20 @@ public class GameView extends View implements SensorEventListener {
             {
                 while(true)
                 {
-                    if(isTouch)
+                    if(running)
                         postInvalidate();
                 }
             }
         }).start();
+    }
+
+
+    public void drawTitle(Canvas canvas,String text){
+        Paint p = new Paint();
+        p.setTextSize(70);
+        p.setColor(Color.YELLOW);
+        p.setStyle(Paint.Style.FILL);
+        p.setTextAlign(CENTER);
+        canvas.drawText(text,canvasWidth/2,canvasHeight/2,p);
     }
 }

@@ -13,6 +13,7 @@ public class Paddle {
     private float x,y;
     private int width,height,color;
     private int balance = 0;
+    private static final int IN_BALANCE = 5;
 
 
     public Paddle(int width,int height,int color){
@@ -35,7 +36,7 @@ public class Paddle {
 
     public void initPaddle(float widthScreen,float heightScreen){
         this.x = widthScreen/2 - width/2;
-        this.y = (float) (heightScreen - height*1.5);
+        this.y = (float) (heightScreen - height*2);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -43,7 +44,6 @@ public class Paddle {
         Paint pPaddle = new Paint();
         pPaddle.setColor(this.color);
         canvas.drawRoundRect(this.x,this.y,this.x+this.width,this.y+this.height,10,10,pPaddle);
-        //canvas.drawRect(this.x,this.y,this.x+this.width,this.y+this.height,pPaddle);
     }
     public void move(float widthScreen){
         int SPACE = 10;
@@ -52,7 +52,7 @@ public class Paddle {
     }
 
     public void setBalance(float x){
-        if(Math.abs(x)*180 > 10) {
+        if(Math.abs(x)*180 > IN_BALANCE) {
             if (x < 0)
                 this.balance = -5;
             else

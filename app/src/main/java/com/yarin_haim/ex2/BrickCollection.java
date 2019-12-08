@@ -12,19 +12,17 @@ public class BrickCollection {
     private boolean finish;
 
 
-    public BrickCollection(float canvasWidth , float canvasHeight,int rows,int columns){
+    public BrickCollection(float canvasWidth , float canvasHeight,int rows,int columns,int textSize){
 
         this.rows = rows;
         this.columns = columns;
         this.finish =false;
         arrayBrick = new Brick [rows][columns];
-        float space = (float) ((canvasWidth/columns) * 0.1);
-        float width = (float) ((canvasWidth/columns) * 0.9 - (space/columns));
-        float height = (canvasHeight/3)/rows;
+        float space = (float) ((canvasWidth/columns) * 0.05);
+        float width = (float) ((canvasWidth/columns) * 0.95 - (space/columns));
+        float height = (canvasHeight/4)/rows;
         float left = space;
-        float top = space + 40;
-        String ss = canvasWidth + "  " + canvasHeight;
-        Log.d("screen size",ss);
+        float top = space + textSize;
         for(int i = 0 ; i < rows ; i++)
         {
             for(int j = 0 ; j < columns ; j++)
